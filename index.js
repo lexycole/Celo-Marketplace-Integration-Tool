@@ -11,6 +11,7 @@ let webpackDevServerOptions = {
   host: "0.0.0.0"
 };
 
+// webpack Development Server
 webpackDevServer.addDevServerEntrypoints(webpackConfig, webpackDevServerOptions);
 let webpackCompiler = webpack(webpackConfig);
 
