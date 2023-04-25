@@ -29,6 +29,9 @@ contract Marketplace {
         uint sold;
     }
 
+    event ProductAdded(address indexed owner, uint indexed index, string name, uint price);
+    event ProductSold(address indexed buyer, uint indexed index, address indexed owner, uint price);
+
     mapping (uint => Product) internal products;
 
     function writeProduct(
@@ -49,6 +52,7 @@ contract Marketplace {
             _sold
         );
         productsLength++;
+        emit ProductAdded(msg.sender, productsLength - 1, _name, _price);
     }
 
     function readProduct(uint _index) public view returns (
@@ -72,6 +76,10 @@ contract Marketplace {
     }
     
     function buyProduct(uint _index) public payable  {
+        uint price = products[_index].price;
+        require(
+        IERC20Token(cUsdTokenAddress).allowance(msg.sender, address(this)) >= price,
+       
         require(
           IERC20Token(cUsdTokenAddress).transferFrom(
             msg.sender,
@@ -81,6 +89,7 @@ contract Marketplace {
           "Transfer failed."
         );
         products[_index].sold++;
+        emit ProductSold(msg.sender, _index, products[_index].owner, price);
     }
     
     function getProductsLength() public view returns (uint) {
